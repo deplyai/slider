@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Before/After Slider (Kaub)</title>
+<style>
+  html,body{margin:0;height:100%}
+  .wrap{position:relative; height:100vh; overflow:hidden; touch-action:none; user-select:none; background:#000}
+  .img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .top{clip-path:inset(0 50% 0 0)}
+  .handle{position:absolute; top:0; bottom:0; left:50%; width:2px; background:#fff; box-shadow:0 0 0 1px #0006}
+  .knob{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+        padding:.35rem .55rem; background:#000a; color:#fff; font:12px/1.2 system-ui; border-radius:4px}
+  .labels{position:absolute; top:.5rem; left:.5rem; right:.5rem; display:flex; justify-content:space-between;
+          color:#fff; font:12px system-ui; text-shadow:0 1px 2px #000}
+</style>
+</head>
+<body>
+  <div class="wrap" id="w">
+    <!-- Use GitHub/Netlify relative files OR Google Drive 'uc?export=download&id=FILE_ID' links -->
+    <img class="img bottom" src="before.jpg" alt="Before: 6 Jul 2024">
+    <img class="img top"    src="after.jpg"  alt="After: 6 Jul 2025" id="top">
+    <div class="handle" id="h"></div>
+    <div class="knob" id="k">↔︎</div>
+    <div class="labels"><span>Before: 6 Jul 2024</span><span>After: 6 Jul 2025</span></div>
+  </div>
+<script>
+(function(){
+  const w = document.getElementById('w'),
+        topImg = document.getElementById('top'),
+        handle = document.getElementById('h'),
+        knob = document.getElementById('k');
+  function setPos(px){
+    const r = w.getBoundingClientRect();
+    const x = Math.max(0, Math.min(px - r.left, r.width));
+    const pct = (x / r.width) * 100;
+    topImg.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+    handle.style.left = knob.style.left = pct + '%';
+  }
+  let dragging = false;
+  w.addEventListener('pointerdown', e => { dragging = true; w.setPointerCapture(e.pointerId); setPos(e.clientX); });
+  w.addEventListener('pointermove', e => { if (dragging) setPos(e.clientX); });
+  w.addEventListener('pointerup',   e => { dragging = false; w.releasePointerCapture(e.pointerId); });
+  window.addEventListener('resize', () => setPos(w.getBoundingClientRect().left + w.clientWidth/2));
+})();
+</script>
+</body>
+</html>
